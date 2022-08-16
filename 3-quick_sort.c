@@ -1,53 +1,76 @@
 #include "sort.h"
 
+/*prototypes. funcs() defined later in this file*/
+void sort_alg(int *arr, int left, int right, size_t size);
+int split(int *arr, int left, int right, size_t size);
+
 /**
- * quick_sort - it sorts an array using the quick sort algorithm
- * @array: the array to be sorted
- * @size: the size of the array
- * Return: Nothing
- */
-
-
+  * quick_sort - quicksort algorithm
+  * @array: array to be sorted
+  * @size: size of array
+  */
 void quick_sort(int *array, size_t size)
 {
-	int i, j, k, track, pivot = 0, sizep = size - 1;
-
-	if (array == NULL || size < 1)
+	if (array == NULL || size <= 1)
 		return;
-	pivot = array[sizep];
-	for (i = 0; i < (int)size; i++)
+	sort_alg(array, 0, size - 1, size);
+}
+
+/**
+  * sort_alg - recursive sorting algorithm
+  * @arr: array
+  * @left: leftmost index
+  * @right: rightmost index
+  * @size: full size of array
+  */
+void sort_alg(int *arr, int left, int right, size_t size)
+{
+	int pivot;
+
+	if (left < right)
 	{
-		k = -1;
-		for (j = 0; j < (int)size; j++)
+		pivot = split(arr, left, right, size);
+		sort_alg(arr, left, pivot - 1, size);
+		sort_alg(arr, pivot + 1, right, size);
+	}
+}
+
+/**
+  * split - split array
+  * @arr: array
+  * @left: leftmost index
+  * @right: rightmost index
+  * @size: full array size
+  * Return: pivot index
+  */
+int split(int *arr, int left, int right, size_t size)
+{
+	int i, i2, pivot, tmp;
+
+	pivot = arr[right];
+	i = left;
+
+	for (i2 = left; i2 < right; i2++)
+	{
+		if (arr[i2] < pivot)
 		{
-			if (array[j] > pivot)
-				continue;
-			if (array[j] < pivot)
+			if (i != i2)
 			{
-				k += 1;
-				if (array[j] < array[k])
-				{
-					track = array[j];
-					array[j] = array[k];
-					array[k] = track;
-					print_array(array, size);
-				}
+				tmp = arr[i2];
+				arr[i2] = arr[i];
+				arr[i] = tmp;
+				print_array(arr, size);
 			}
-		}
-		k += 1;
-		if (pivot < array[k])
-		{
-			track = array[sizep];
-			array[sizep] = array[k];
-			array[k] = track;
-			pivot = array[sizep];
-			print_array(array, size);
-			i--;
-		}
-		else if (pivot >= array[k])
-		{
-			sizep -= 1;
-			pivot  = array[sizep];
+			i++;
 		}
 	}
+	if (arr[i] != arr[right])
+	{
+		tmp = arr[i];
+		arr[i] = arr[right];
+		arr[right] = tmp;
+		print_array(arr, size);
+	}
+
+	return (i);
 }
